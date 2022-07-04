@@ -37,9 +37,9 @@ class ChatService {
         }
     }
 
-    fun deleteChat(idChat: Int): Boolean {
+    fun deleteChat(idUser: Int,idChat: Int): Boolean {
         for ((index, chat) in chats.withIndex()) {
-            if (!chat.deleted && chat.id == idChat) {
+            if (!chat.deleted && chat.id == idChat && chat.userIds.contains(idUser)) {
                 val deletedChat = chat.copy(deleted = true)
                 chats[index] = deletedChat
                 chat.messages.forEachIndexed { i, message ->
@@ -53,12 +53,14 @@ class ChatService {
         return false
     }
 
-    fun deleteMessage(idChat: Int, idMessage: Int): Boolean {
-        val foundChat = chats.firstOrNull { !it.deleted && it.id == idChat }
+    fun deleteMessage(idUser: Int, idChat: Int, idMessage: Int): Boolean {
+        val foundChat = chats.firstOrNull { !it.deleted && it.id == idChat && it.userIds.contains(idUser) }
         val foundMessage = foundChat?.messages?.firstOrNull { !it.deleted && it.id == idMessage }
         val indexMessage = foundChat?.messages?.indexOf(foundMessage)
         if (indexMessage != null && foundMessage != null) {
             foundChat.messages[indexMessage] = foundMessage.copy(deleted = true)
+            if (foundChat.messages.all {it.deleted})
+                chats[chats.indexOf(foundChat)] = foundChat.copy(deleted = true)
             return true
         }
         return false
@@ -76,7 +78,7 @@ class ChatService {
 
             var i = 1
             for ((index) in foundChat.messages.withIndex()) {
-                if (index < indexStartMessage) continue
+                if (index < indexStartMessage || foundChat.messages[index].deleted) continue
                 if (i > numberMessages) break
                 if (foundChat.messages[index].peerId == idUser) foundChat.messages[index] =
                     foundChat.messages[index].copy(readState = true)
@@ -107,7 +109,7 @@ class ChatService {
         return i
     }
 
-    fun editMessage(idMessage: Int, idChat: Int, idUser: Int, text: String): Boolean {
+    fun editMessage(idUser: Int, idMessage: Int, idChat: Int, text: String): Boolean {
         val foundChat = chats.lastOrNull { !it.deleted && it.id == idChat && it.userIds.contains(idUser) }
         if (foundChat != null) {
             val foundMessage = foundChat.messages.lastOrNull {

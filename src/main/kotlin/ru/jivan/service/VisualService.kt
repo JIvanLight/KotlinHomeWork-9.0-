@@ -71,7 +71,7 @@ fun main() {
                 println("Введите текст сообщения")
                 val text = readln()
                 chatService.editMessage(idMessage, idChat, id, text)
-                if (chatService.editMessage(idMessage, idChat, id, text))
+                if (chatService.editMessage(id, idMessage, idChat, text))
                     println("Успешно!") else println("Не выполнено!")
             }
 
@@ -79,13 +79,13 @@ fun main() {
                 val idChat = inputNum("Введите id чата")
                 val idMessage = inputNum("Введите id удаляемого сообщения")
 
-                if (chatService.deleteMessage(idChat, idMessage))
+                if (chatService.deleteMessage(id, idChat, idMessage))
                     println("Успешно!") else println("Не выполнено!")
             }
 
             4 -> {
                 val idChat = inputNum("Введите id чата")
-                if (chatService.deleteChat(idChat))
+                if (chatService.deleteChat(id, idChat))
                     println("Успешно!") else println("Не выполнено!")
             }
 
