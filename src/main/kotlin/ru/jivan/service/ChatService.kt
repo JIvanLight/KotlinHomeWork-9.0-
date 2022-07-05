@@ -5,11 +5,11 @@ import ru.jivan.data.Chat.Message
 import java.time.Instant
 
 class ChatService {
-    private val chats: MutableList<Chat> = mutableListOf()
-    private var lastIdChat: Int = 0
-    private var lastIdMessage: Int = 0
+    val chats: MutableList<Chat> = mutableListOf()
+    var lastIdChat: Int = 0
+    var lastIdMessage: Int = 0
 
-    private fun add(chat: Chat): Chat {
+    fun add(chat: Chat): Chat {
         lastIdChat++
         val chatWithId = chat.copy(id = lastIdChat)
         chats.add(chatWithId)
@@ -37,7 +37,7 @@ class ChatService {
         }
     }
 
-    fun deleteChat(idUser: Int,idChat: Int): Boolean {
+    fun deleteChat(idUser: Int, idChat: Int): Boolean {
         for ((index, chat) in chats.withIndex()) {
             if (!chat.deleted && chat.id == idChat && chat.userIds.contains(idUser)) {
                 val deletedChat = chat.copy(deleted = true)
@@ -59,7 +59,7 @@ class ChatService {
         val indexMessage = foundChat?.messages?.indexOf(foundMessage)
         if (indexMessage != null && foundMessage != null) {
             foundChat.messages[indexMessage] = foundMessage.copy(deleted = true)
-            if (foundChat.messages.all {it.deleted})
+            if (foundChat.messages.all { it.deleted })
                 chats[chats.indexOf(foundChat)] = foundChat.copy(deleted = true)
             return true
         }
@@ -82,7 +82,7 @@ class ChatService {
                 if (i > numberMessages) break
                 if (foundChat.messages[index].peerId == idUser) foundChat.messages[index] =
                     foundChat.messages[index].copy(readState = true)
-                if (!foundChat.messages[index].deleted) foundMessages.add(foundChat.messages[index])
+                foundMessages.add(foundChat.messages[index])
                 i++
             }
             foundMessages.sortBy { it.date }
@@ -99,7 +99,7 @@ class ChatService {
         return foundChats
     }
 
-    fun getUnreadChats(idUser: Int): Int {
+    fun getUnreadChatsCount(idUser: Int): Int {
         var i = 0
         chats.forEach {
             if (!it.deleted && it.userIds.contains(idUser) && it.messages.any { e ->
@@ -123,5 +123,4 @@ class ChatService {
         }
         return false
     }
-
 }

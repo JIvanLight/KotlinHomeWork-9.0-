@@ -105,7 +105,7 @@ fun main() {
             }
 
             7 -> {
-                val result = chatService.getUnreadChats(id)
+                val result = chatService.getUnreadChatsCount(id)
                 println("Количество непрочитанных чатов: $result")
             }
 

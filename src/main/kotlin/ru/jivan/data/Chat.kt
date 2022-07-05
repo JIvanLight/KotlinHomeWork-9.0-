@@ -6,7 +6,6 @@ data class Chat(
     val id: Int = 0,
     val userIds: MutableSet<Int> = mutableSetOf(),
     val deleted: Boolean = false,
-    val deletedMessages: Int = 0,
     val messages: MutableList<Message> = mutableListOf()
 ) {
     data class Message(
